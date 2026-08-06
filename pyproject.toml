@@ -1,0 +1,12 @@
+[project]
+name = "nerdhosting-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "django>=6.0.7",
+    "django-allauth[socialaccount]>=65.18.0",
+    "django-anymail[resend]>=15.1",
+    "dotenv>=0.9.9",
+]
