@@ -1,5 +1,5 @@
 from django.db import models
-
+from utils.minecraft_functions import isgpu_compatible
 
 class Plans(models.Model):
     class RAM:
@@ -40,7 +40,7 @@ class MinecraftServer(models.Model):
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='minecraft_servers')
     version = models.CharField(max_length=20)
     curseforge_url = models.URLField(blank=True, null=True)
-    modloader = models.CharField(max_length=20, choices=[
+    modloader = models.CharField(max_length=20, default=Modloader.VANILLA, choices=[
         (Modloader.VANILLA, 'VANILLA'),
         (Modloader.NEOFORGE, 'NEOFORGE'),
         (Modloader.FORGE, 'FORGE'),
@@ -49,4 +49,8 @@ class MinecraftServer(models.Model):
         (Modloader.FOLIA, 'FOLIA'),
         (Modloader.CURSEFORGE, 'CURSEFORGE')
     ])  
-        
+    
+    def save(self, *args, **kwargs):
+        if self.plan.gpu and not isgpu_compatible(self.version, self.modloader):
+            raise ValueError("Plan with GPU acceleration is incompatible with this hardware")
+        super().save(*args, **kwargs)
